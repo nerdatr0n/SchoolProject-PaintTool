@@ -6,10 +6,10 @@
 
   (c) 2019 Media Design School
 
-  File Name   :   [Filename]
+  File Name   :   main.cpp
   Description :   [One line description of what is the file is for]
-  Author      :   [Your name]
-  Mail        :   [your.name]@mediadesign.school.nz
+  Author      :   David Haverland
+  Mail        :   david.hav@mediadesign.school.nz
 ********************/
 
 //#define WIN32_LEAN_AND_MEAN
