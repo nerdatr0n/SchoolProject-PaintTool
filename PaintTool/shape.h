@@ -8,7 +8,7 @@
 
   File Name   :   [Filename]
   Description :   [One line description of what is the file is for]
-  Author      :   [Your name]
+  Author      :   David Haverland
   Mail        :   [your.name]@mediadesign.school.nz
 ********************/
 
