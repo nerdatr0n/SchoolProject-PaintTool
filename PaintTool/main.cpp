@@ -120,11 +120,14 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	return (DefWindowProc(_hwnd, _msg, _wparam, _lparam));
 }
 
+
+// This is like the "main" or "create" function
 int WINAPI WinMain(HINSTANCE _hInstance,
 	HINSTANCE _hPrevInstance,
 	LPSTR _lpCmdLine,
 	int _nCmdShow)
 {
+	// Makes a window class 
 	WNDCLASSEX winclass; // This will hold the class we create.
 	HWND hwnd;           // Generic window handle.
 	MSG msg;             // Generic message.
@@ -151,7 +154,10 @@ int WINAPI WinMain(HINSTANCE _hInstance,
 		return (0);
 	}
 
+
 	g_hMenu = LoadMenu(_hInstance, MAKEINTRESOURCE(IDR_MENU1));
+
+
 	// create the window
 	hwnd = CreateWindowEx(NULL, // Extended style.
 		WINDOW_CLASS_NAME,      // Class.
@@ -164,6 +170,7 @@ int WINAPI WinMain(HINSTANCE _hInstance,
 		_hInstance,             // Instance of this application.
 		NULL);                  // Extra creation parameters.
 
+	// Makes sure it works
 	if (!(hwnd))
 	{
 		return (0);
