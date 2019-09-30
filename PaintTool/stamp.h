@@ -6,10 +6,10 @@
 
   (c) 2019 Media Design School
 
-  File Name   :   [Filename]
+  File Name   :   stamp.h
   Description :   [One line description of what is the file is for]
-  Author      :   [Your name]
-  Mail        :   [your.name]@mediadesign.school.nz
+  Author      :   David Haverland
+  Mail        :   david.hav8466@mediadesign.school.nz
 ********************/
 
 #ifndef __STAMP_H__

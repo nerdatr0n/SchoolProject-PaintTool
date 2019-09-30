@@ -9,7 +9,7 @@
   File Name   :   main.cpp
   Description :   [One line description of what is the file is for]
   Author      :   David Haverland
-  Mail        :   david.hav@mediadesign.school.nz
+  Mail        :   david.hav8466@mediadesign.school.nz
 ********************/
 
 //#define WIN32_LEAN_AND_MEAN
@@ -183,8 +183,11 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 			}
 		}
 
+		
 		InvalidateRect(_hwnd, NULL, TRUE);
 		UpdateWindow(_hwnd);
+		
+		
 		return (0); // MUST HAVE RETURN  - I CAN HANDLE THIS CASE. DO NOT USE TO DEFAULT CASE.
 	}
 	break;

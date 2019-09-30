@@ -9,7 +9,7 @@
   File Name   :   line.cpp
   Description :   [One line description of what is the file is for]
   Author      :   David Haverland
-  Mail        :   [your.name]@mediadesign.school.nz
+  Mail        :   david.hav8466@mediadesign.school.nz
 ********************/
 
 
