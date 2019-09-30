@@ -106,6 +106,11 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 			s_currentShape = LINESHAPE;
 			break;
 		}
+		case ID_SHAPE_R:
+		{
+			s_currentShape = RECTANGLESHAPE;
+			break;
+		}
 		case ID_HELP_ABOUT:
 		{
 			MessageBox(_hwnd, L"This paint tool was developed by David Haverland In collaboration with [SAMPLE TEXT] Studios ltd.", L"Author Information", MB_OK | MB_ICONINFORMATION);
@@ -136,6 +141,11 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 			break;
 		case RECTANGLESHAPE:
+			g_pShape = new CRectangle();
+			g_pShape->SetStartX(s_iMouseX);
+			g_pShape->SetStartY(s_iMouseY);
+			g_pCanvas->AddShape(g_pShape);
+
 			break;
 		case ELLIPSESHAPE:
 			break;
@@ -149,6 +159,14 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 		return (0); // MUST HAVE RETURN  - I CAN HANDLE THIS CASE. DO NOT USE TO DEFAULT CASE.
 	}
+	break;
+
+	case WM_LBUTTONUP:
+	{
+		g_pShape = nullptr;
+
+	}
+	break;
 
 	case WM_MOUSEMOVE:
 	{
@@ -158,7 +176,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 		if (s_bMouseDown == true)
 		{
-			if (g_pShape) // != nullptr
+			if (g_pShape != nullptr) // != nullptr
 			{
 				g_pShape->SetEndX(s_iMouseX);
 				g_pShape->SetEndY(s_iMouseY);

@@ -154,6 +154,7 @@
     <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shape.cpp" />
+    <ClCompile Include="rectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PaintTool.rc" />
