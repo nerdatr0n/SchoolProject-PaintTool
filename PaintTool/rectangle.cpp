@@ -41,12 +41,17 @@ void CRectangle::Draw(HDC _hdc) {
 	// Select the pen into the context:
 	HPEN old_pen = static_cast<HPEN>(SelectObject(_hdc, green_pen));
 
-	MoveToEx(_hdc, m_iStartX, m_iStartY, NULL); // Draw the line...
-	LineTo(_hdc, m_iStartX, m_iEndY);
-	LineTo(_hdc, m_iEndX, m_iEndY);
-	LineTo(_hdc, m_iEndX, m_iStartY);
-	LineTo(_hdc, m_iStartX, m_iStartY);
+	Rectangle(_hdc, m_iStartX, m_iStartY, m_iEndX, m_iEndY);
 
+
+	/*
+	int FillRect(
+		HDC hDC, // Handle to device context.
+		const RECT *lprc,// Pointer to structure
+
+		// with rectangle.
+		HBRUSH hbr);
+		*/
 	SelectObject(_hdc, old_pen); // Restore old pen.
 	DeleteObject(green_pen); // Delete the green pen.
 }

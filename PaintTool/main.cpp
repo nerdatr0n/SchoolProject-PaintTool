@@ -111,6 +111,11 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 			s_currentShape = RECTANGLESHAPE;
 			break;
 		}
+		case ID_SHAPE_ELLIPSE:
+		{
+			s_currentShape = ELLIPSESHAPE;
+			break;
+		}
 		case ID_HELP_ABOUT:
 		{
 			MessageBox(_hwnd, L"This paint tool was developed by David Haverland In collaboration with [SAMPLE TEXT] Studios ltd.", L"Author Information", MB_OK | MB_ICONINFORMATION);
@@ -125,6 +130,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 	case WM_LBUTTONDOWN:
 	{
+
 		// get the position of the mouse
 		s_iMouseX = static_cast<int>(LOWORD(_lparam));
 		s_iMouseY = static_cast<int>(HIWORD(_lparam));
@@ -148,6 +154,11 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 			break;
 		case ELLIPSESHAPE:
+			g_pShape = new CEllipse();
+			g_pShape->SetStartX(s_iMouseX);
+			g_pShape->SetStartY(s_iMouseY);
+			g_pCanvas->AddShape(g_pShape);
+
 			break;
 		case POLYGONSHAPE:
 			break;
@@ -164,7 +175,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	case WM_LBUTTONUP:
 	{
 		g_pShape = nullptr;
-
+		s_bMouseDown = false;
 	}
 	break;
 
@@ -183,10 +194,10 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 			}
 		}
 
-		
-		InvalidateRect(_hwnd, NULL, TRUE);
-		UpdateWindow(_hwnd);
-		
+		if (s_bMouseDown == true) {
+			InvalidateRect(_hwnd, NULL, TRUE);
+			UpdateWindow(_hwnd);
+		}
 		
 		return (0); // MUST HAVE RETURN  - I CAN HANDLE THIS CASE. DO NOT USE TO DEFAULT CASE.
 	}
@@ -245,7 +256,7 @@ int WINAPI WinMain(HINSTANCE _hInstance,
 		return (0);
 	}
 
-
+	
 	g_hMenu = LoadMenu(_hInstance, MAKEINTRESOURCE(IDR_MENU1));
 
 
