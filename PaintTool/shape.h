@@ -39,6 +39,8 @@ protected:
 	int m_iEndX;
 	int m_iStartY;
 	int m_iEndY;
+
+	//int m_
 	//COLORREF m_ColorRef;
 };
 

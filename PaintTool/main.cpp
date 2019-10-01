@@ -37,7 +37,7 @@ HMENU g_hMenu;
 
 //Enum to decalre the type of tool supported by the application.
 enum ESHAPE
-{
+{	
 	FREEHAND = 0,
 	LINESHAPE,
 	RECTANGLESHAPE,
@@ -138,32 +138,47 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 		switch (s_currentShape)
 		{
+		
 		case LINESHAPE:
+		{
 			g_pShape = new CLine();
 			g_pShape->SetStartX(s_iMouseX);
 			g_pShape->SetStartY(s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
 
+		}
+		break;
 
-			break;
 		case RECTANGLESHAPE:
+		{
 			g_pShape = new CRectangle();
 			g_pShape->SetStartX(s_iMouseX);
 			g_pShape->SetStartY(s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
+		}
+		break;
 
-			break;
 		case ELLIPSESHAPE:
+		{
 			g_pShape = new CEllipse();
 			g_pShape->SetStartX(s_iMouseX);
 			g_pShape->SetStartY(s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
+		}
+		break;
+		
+		case POLYGONSHAPE: 
+		{
 
-			break;
-		case POLYGONSHAPE:
-			break;
+		}
+		break;
+		
 		case STAMP:
-			break;
+		{
+
+		}
+		break;
+		
 		default:
 			break;
 		}
