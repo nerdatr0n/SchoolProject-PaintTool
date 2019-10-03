@@ -65,6 +65,15 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	static int s_iMouseY;
 	static bool s_bMouseDown = false;
 
+	// For the pen
+	static int s_iPenStyle;
+	static int s_iPenWidth;
+	static COLORREF s_penColor = RGB(0, 0, 0);
+
+	
+
+
+
 	switch (_msg)
 	{
 	case WM_CREATE:
@@ -76,6 +85,9 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		return (0);
 	}
 	break;
+
+	
+
 
 	case WM_PAINT:
 	{
@@ -96,6 +108,42 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	{
 		switch (LOWORD(_wparam))
 		{
+
+		case ID_PEN_COLOR:
+		{
+
+			// Variable for the colour creator
+			CHOOSECOLOR cc;
+
+			static COLORREF arrayCustomColors[16];
+			ZeroMemory(&cc, sizeof(CHOOSECOLOR));
+			cc.lStructSize = sizeof(CHOOSECOLOR);
+			cc.hwndOwner = _hwnd;
+			cc.lpCustColors = (LPDWORD)arrayCustomColors;
+			cc.rgbResult = s_penColor;
+			cc.Flags = CC_RGBINIT;
+
+			if (ChooseColor(&cc) == TRUE)
+			{
+				s_penColor = cc.rgbResult;
+			}
+		}
+		break;
+
+		case ID_PEN_WIDTH:
+		{
+
+
+		}
+		break;
+
+		case ID_PEN_STYLE:
+		{
+
+
+		}
+		break;
+
 		case ID_FILE_EXIT:
 		{
 			PostQuitMessage(0);
@@ -141,9 +189,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		
 		case LINESHAPE:
 		{
-			g_pShape = new CLine();
-			g_pShape->SetStartX(s_iMouseX);
-			g_pShape->SetStartY(s_iMouseY);
+			g_pShape = new CLine(s_iPenStyle, s_iPenWidth, s_penColor, s_iMouseX, s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
 
 		}
@@ -206,14 +252,15 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 			{
 				g_pShape->SetEndX(s_iMouseX);
 				g_pShape->SetEndY(s_iMouseY);
+
+				// Re-Draws the window
+				InvalidateRect(_hwnd, NULL, TRUE);
+				UpdateWindow(_hwnd);
 			}
+
 		}
 
-		if (s_bMouseDown == true) {
-			InvalidateRect(_hwnd, NULL, TRUE);
-			UpdateWindow(_hwnd);
-		}
-		
+				
 		return (0); // MUST HAVE RETURN  - I CAN HANDLE THIS CASE. DO NOT USE TO DEFAULT CASE.
 	}
 	break;
