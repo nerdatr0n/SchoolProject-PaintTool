@@ -47,6 +47,7 @@ enum ESHAPE
 };
 
 
+
 void GameLoop()
 {
 	//One frame of game logic occurs here...
@@ -70,8 +71,10 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	static int s_iPenWidth;
 	static COLORREF s_penColor = RGB(0, 0, 0);
 
-	
-
+	// For the fill
+	static EBRUSHSTYLE s_iBrushStyle;
+	static int s_iHatchStyle;
+	static COLORREF s_FillColor;
 
 
 	switch (_msg)
@@ -130,40 +133,97 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		}
 		break;
 
-		case ID_PEN_WIDTH:
+		// Changes the line width
+		case ID_WIDTH_1:
+		{
+			s_iPenWidth = 1;
+		}
+		break;
+		case ID_WIDTH_2:
+		{
+			s_iPenWidth = 3;
+		}
+		break;
+		case ID_WIDTH_3:
+		{
+			s_iPenWidth = 9;
+		}
+		break;
+
+		// Changes the line style
+		case ID_STYLE_SOLID:
+		{
+			s_iPenStyle = 1;
+		}
+		break;
+		case ID_STYLE_DASHED:
+		{
+			s_iPenStyle = 2;
+		}
+		break;
+		case ID_STYLE_DOTTED:
+		{
+			s_iPenStyle = 3;
+		}
+		break;
+		case ID_STYLE_D:
+		{
+			s_iPenStyle = 4;
+		}
+		break;
+		case ID_STYLE_DASHDOTDOT:
+		{
+			s_iPenStyle = 5;
+		}
+		break;
+
+
+
+		// Changes The fill colour
+		case ID_BRUSH_COLOR:
 		{
 
 
 		}
 		break;
 
-		case ID_PEN_STYLE:
+		// Changes The fill style
+		case ID_BRUSH_STYLE:
 		{
 
 
 		}
 		break;
-
+		
+		// Closes the window
 		case ID_FILE_EXIT:
 		{
 			PostQuitMessage(0);
 			break;
 		}
+
+		// Sets the shape to the line
 		case ID_SHAPE_LINE:
 		{
 			s_currentShape = LINESHAPE;
 			break;
 		}
+
+		// Sets the shape to the rectangle
 		case ID_SHAPE_R:
 		{
 			s_currentShape = RECTANGLESHAPE;
 			break;
 		}
+
+		// Sets the shape to an ellipse
 		case ID_SHAPE_ELLIPSE:
 		{
 			s_currentShape = ELLIPSESHAPE;
 			break;
 		}
+
+		// Displays the credits
 		case ID_HELP_ABOUT:
 		{
 			MessageBox(_hwnd, L"This paint tool was developed by David Haverland In collaboration with [SAMPLE TEXT] Studios ltd.", L"Author Information", MB_OK | MB_ICONINFORMATION);
@@ -176,6 +236,8 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	}
 	break;
 
+
+	// For a mouse click
 	case WM_LBUTTONDOWN:
 	{
 
@@ -187,6 +249,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		switch (s_currentShape)
 		{
 		
+		// Sets up the line
 		case LINESHAPE:
 		{
 			g_pShape = new CLine(s_iPenStyle, s_iPenWidth, s_penColor, s_iMouseX, s_iMouseY);
@@ -195,18 +258,18 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		}
 		break;
 
+		// Sets up the rectangle
 		case RECTANGLESHAPE:
 		{
-			g_pShape = new CRectangle();
-			g_pShape->SetStartX(s_iMouseX);
-			g_pShape->SetStartY(s_iMouseY);
+			g_pShape = new CRectangle(s_iBrushStyle, s_iHatchStyle, s_FillColor, s_iPenStyle, s_penColor, s_iPenWidth, s_iMouseX, s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
 		}
 		break;
 
+		// Sets up the ellipse
 		case ELLIPSESHAPE:
 		{
-			g_pShape = new CEllipse();
+			g_pShape = new CEllipse(s_iBrushStyle, s_iHatchStyle, s_FillColor, s_iPenStyle, s_penColor, s_iPenWidth, s_iMouseX, s_iMouseY);
 			g_pShape->SetStartX(s_iMouseX);
 			g_pShape->SetStartY(s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
@@ -233,13 +296,19 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	}
 	break;
 
+
+	// On mouse release
 	case WM_LBUTTONUP:
 	{
+		// Finishes the shape
 		g_pShape = nullptr;
+
+		// Stops it from redrawing a bunch o times
 		s_bMouseDown = false;
 	}
 	break;
 
+	
 	case WM_MOUSEMOVE:
 	{
 		// get the position of the mouse
@@ -265,6 +334,8 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	}
 	break;
 
+
+	// Stops memory leakage, I think
 	case WM_DESTROY:
 	{
 		delete g_pCanvas;

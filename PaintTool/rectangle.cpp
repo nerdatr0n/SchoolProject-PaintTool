@@ -22,8 +22,16 @@
 
 
 
-CRectangle::CRectangle(EBRUSHSTYLE _iBrushStyle, int _iHatchStyle, COLORREF _FillColor, int _iPenStyle, COLORREF _PenColor, int _X, int _Y) {
+CRectangle::CRectangle(EBRUSHSTYLE _iBrushStyle, int _iHatchStyle, COLORREF _FillColor, int _iPenStyle, COLORREF _PenColor, int _iPenWidth, int _X, int _Y) {
 
+	m_iBrushStyle = _iBrushStyle;
+	m_iHatchStyle = _iHatchStyle;
+	m_iFillColor = _FillColor;
+	m_iPenStyle = _iPenStyle;
+	m_penColor = _PenColor;
+	m_iPenWidth = _iPenWidth;
+	m_iStartX = _X;
+	m_iStartY = _Y;
 }
 
 CRectangle::CRectangle() {
@@ -37,23 +45,25 @@ CRectangle::~CRectangle() {
 
 void CRectangle::Draw(HDC _hdc) {
 	// Create the green pen:
-	HPEN green_pen = CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN currentPen = CreatePen(m_iPenStyle, m_iPenWidth, m_penColor);
 	// Select the pen into the context:
-	HPEN old_pen = static_cast<HPEN>(SelectObject(_hdc, green_pen));
+	HPEN old_pen = static_cast<HPEN>(SelectObject(_hdc, currentPen));
 
 	Rectangle(_hdc, m_iStartX, m_iStartY, m_iEndX, m_iEndY);
 
 
-	/*
+	
 	int FillRect(
 		HDC hDC, // Handle to device context.
 		const RECT *lprc,// Pointer to structure
 
 		// with rectangle.
 		HBRUSH hbr);
-		*/
+		
+
+
 	SelectObject(_hdc, old_pen); // Restore old pen.
-	DeleteObject(green_pen); // Delete the green pen.
+	DeleteObject(currentPen); // Delete the green pen.
 }
 
 

@@ -22,10 +22,13 @@
 
 #include "shape.h"
 
+
+
+
 class CEllipse : public IShape
 {
 public:
-	CEllipse(COLORREF _newColor, int, int);
+	CEllipse(EBRUSHSTYLE _iBrushStyle, int _iHatchStyle, COLORREF _FillColor, int _iPenStyle, COLORREF _PenColor, int _iPenWidth, int _X, int _Y);
 	CEllipse();
 	virtual ~CEllipse();
 
@@ -34,7 +37,12 @@ public:
 
 
 private:
-	COLORREF m_Color;
+	EBRUSHSTYLE m_iBrushStyle;
+	int m_iHatchStyle;
+	COLORREF m_iFillColor;
+	int m_iPenStyle;
+	COLORREF m_penColor;
+	int m_iPenWidth;
 };
 
 #endif
