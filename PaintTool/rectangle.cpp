@@ -48,22 +48,37 @@ void CRectangle::Draw(HDC _hdc) {
 	HPEN currentPen = CreatePen(m_iPenStyle, m_iPenWidth, m_penColor);
 	// Select the pen into the context:
 	HPEN old_pen = static_cast<HPEN>(SelectObject(_hdc, currentPen));
+	HBRUSH currentBrush;
+	
+	if (m_iHatchStyle == 100)
+	{
+		currentBrush = CreateSolidBrush(m_iFillColor);
+	}
+	else 
+	{
+		currentBrush = CreateHatchBrush(m_iHatchStyle, m_iFillColor);;
+	}
+	
+
+
+
+	HBRUSH old_Brush = static_cast<HBRUSH>(SelectObject(_hdc, currentBrush));
+
+
+
 
 	Rectangle(_hdc, m_iStartX, m_iStartY, m_iEndX, m_iEndY);
 
-
 	
-	int FillRect(
-		HDC hDC, // Handle to device context.
-		const RECT *lprc,// Pointer to structure
 
-		// with rectangle.
-		HBRUSH hbr);
-		
 
 
 	SelectObject(_hdc, old_pen); // Restore old pen.
 	DeleteObject(currentPen); // Delete the green pen.
+
+	SelectObject(_hdc, old_Brush); // Restore old pen.
+	DeleteObject(currentBrush); // Delete the green pen.
+
 }
 
 

@@ -23,7 +23,7 @@
     <ProjectGuid>{6BC04324-DA08-4475-AEE4-6F7A437787BE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>PaintTool</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -150,12 +150,14 @@
     <ClInclude Include="stamp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="backBuffer.cpp" />
     <ClCompile Include="canvas.cpp" />
     <ClCompile Include="ellipse.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shape.cpp" />
     <ClCompile Include="rectangle.cpp" />
+    <ClCompile Include="stamp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PaintTool.rc" />

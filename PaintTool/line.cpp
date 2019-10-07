@@ -23,7 +23,8 @@ CLine::CLine(int _iStyle, int _iWidth, COLORREF _newColor, int _iStartX, int _iS
 	m_Color = _newColor;
 	m_iStartX = _iStartX;
 	m_iStartY = _iStartY;
-
+	m_iEndX = _iStartX;
+	m_iEndY = _iStartY;
 }
 
 CLine::CLine()

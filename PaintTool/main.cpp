@@ -16,6 +16,8 @@
 
 #include <windows.h>   // Include all the windows headers.
 #include <windowsx.h>  // Include useful macros.
+#include <shobjidl.h>  // For bitmaps
+
 
 #include "resource.h"
 #include "shape.h"
@@ -74,7 +76,10 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	// For the fill
 	static EBRUSHSTYLE s_iBrushStyle;
 	static int s_iHatchStyle;
-	static COLORREF s_FillColor;
+	static COLORREF s_FillColor = RGB(255, 255, 255);
+
+	// For the stamp-bitmap
+	static LPWSTR s_BitmapFilePath;
 
 
 	switch (_msg)
@@ -137,43 +142,78 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		case ID_WIDTH_1:
 		{
 			s_iPenWidth = 1;
+			CheckMenuItem(g_hMenu, ID_WIDTH_1, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_2, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_3, MF_UNCHECKED);
 		}
 		break;
 		case ID_WIDTH_2:
 		{
 			s_iPenWidth = 3;
+			CheckMenuItem(g_hMenu, ID_WIDTH_1, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_2, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_3, MF_UNCHECKED);
 		}
 		break;
 		case ID_WIDTH_3:
 		{
 			s_iPenWidth = 9;
+			CheckMenuItem(g_hMenu, ID_WIDTH_1, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_2, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_WIDTH_3, MF_CHECKED);
 		}
 		break;
 
 		// Changes the line style
 		case ID_STYLE_SOLID:
 		{
-			s_iPenStyle = 1;
+			s_iPenStyle = 0;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DOTTED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_D, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHDOTDOT, MF_UNCHECKED);
+
 		}
 		break;
 		case ID_STYLE_DASHED:
 		{
-			s_iPenStyle = 2;
+			s_iPenStyle = 1;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHED, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DOTTED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_D, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHDOTDOT, MF_UNCHECKED);
 		}
 		break;
 		case ID_STYLE_DOTTED:
 		{
-			s_iPenStyle = 3;
+			s_iPenStyle = 2;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DOTTED, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_D, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHDOTDOT, MF_UNCHECKED);
 		}
 		break;
 		case ID_STYLE_D:
 		{
-			s_iPenStyle = 4;
+			s_iPenStyle = 3;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DOTTED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_D, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHDOTDOT, MF_UNCHECKED);
 		}
 		break;
 		case ID_STYLE_DASHDOTDOT:
 		{
-			s_iPenStyle = 5;
+			s_iPenStyle = 4;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DOTTED, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_D, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DASHDOTDOT, MF_CHECKED);
 		}
 		break;
 
@@ -182,19 +222,24 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		// Changes The fill colour
 		case ID_BRUSH_COLOR:
 		{
+			// Variable for the colour creator
+			CHOOSECOLOR cc;
 
+			static COLORREF arrayCustomColors[16];
+			ZeroMemory(&cc, sizeof(CHOOSECOLOR));
+			cc.lStructSize = sizeof(CHOOSECOLOR);
+			cc.hwndOwner = _hwnd;
+			cc.lpCustColors = (LPDWORD)arrayCustomColors;
+			cc.rgbResult = s_FillColor;
+			cc.Flags = CC_RGBINIT;
 
+			if (ChooseColor(&cc) == TRUE)
+			{
+				s_FillColor = cc.rgbResult;
+			}
 		}
 		break;
-
-		// Changes The fill style
-		case ID_BRUSH_STYLE:
-		{
-
-
-		}
-		break;
-		
+				
 		// Closes the window
 		case ID_FILE_EXIT:
 		{
@@ -206,22 +251,192 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		case ID_SHAPE_LINE:
 		{
 			s_currentShape = LINESHAPE;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_UNCHECKED);
 			break;
 		}
-
-		// Sets the shape to the rectangle
+				// Sets the shape to the rectangle
 		case ID_SHAPE_R:
 		{
 			s_currentShape = RECTANGLESHAPE;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_UNCHECKED);
 			break;
 		}
-
-		// Sets the shape to an ellipse
+				// Sets the shape to an ellipse
 		case ID_SHAPE_ELLIPSE:
 		{
 			s_currentShape = ELLIPSESHAPE;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_UNCHECKED);
 			break;
 		}
+		case ID_SHAPE_POLYGON:
+		{
+			s_currentShape = POLYGONSHAPE;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_UNCHECKED);
+			break;
+		}
+		case ID_SHAPE_STAMP:
+		{
+			HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+			if (SUCCEEDED(hr))
+			{
+				IFileOpenDialog *pFileOpen;
+
+				// Create the FileOpenDialog object.
+				hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+				if (SUCCEEDED(hr))
+				{
+					// Show the Open dialog box.
+					hr = pFileOpen->Show(NULL);
+
+					// Get the file name from the dialog box.
+					if (SUCCEEDED(hr))
+					{
+						IShellItem *pItem;
+						hr = pFileOpen->GetResult(&pItem);
+						if (SUCCEEDED(hr))
+						{
+
+							LPWSTR pszFilePath;
+
+							hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+							// Display the file name to the user.
+							if (SUCCEEDED(hr))
+							{
+								s_BitmapFilePath = pszFilePath;
+
+								CoTaskMemFree(pszFilePath);
+							}
+							pItem->Release();
+						}
+					}
+					pFileOpen->Release();
+				}
+				CoUninitialize();
+			}
+
+			s_currentShape = STAMP;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_UNCHECKED);
+			break;
+		}
+		case ID_SHAPE_FREEHAND:
+		{
+			s_currentShape = FREEHAND;
+			CheckMenuItem(g_hMenu, ID_SHAPE_LINE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_R, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_ELLIPSE, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_POLYGON, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_STAMP, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_SHAPE_FREEHAND, MF_CHECKED);
+			break;
+		}
+		
+
+
+		// Sets the hatch type
+		case ID_STYLE_SOLID40028: {
+			s_iHatchStyle = 100;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID40028, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_STYLE_DIAGONAL: {
+			s_iHatchStyle = 2;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID40028, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_STYLE_DIAGONALBUTTHEOTHERWAY: {
+			s_iHatchStyle = 3;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID40028, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_STYLE_CROSS: {
+			s_iHatchStyle = 4;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID40028, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_STYLE_HORIZONTAL: {
+			s_iHatchStyle = 0;
+			CheckMenuItem(g_hMenu, ID_STYLE_SOLID40028, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_Menu: {
+			s_iHatchStyle = 5;
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_CHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_UNCHECKED);
+			break;
+		}
+		case ID_STYLE_VERTICAL: {
+			s_iHatchStyle = 1;
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_DIAGONALBUTTHEOTHERWAY, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_CROSS, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_HORIZONTAL, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_Menu, MF_UNCHECKED);
+			CheckMenuItem(g_hMenu, ID_STYLE_VERTICAL, MF_CHECKED);
+			break;
+		}
+
+
 
 		// Displays the credits
 		case ID_HELP_ABOUT:
@@ -248,8 +463,8 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 		switch (s_currentShape)
 		{
-		
-		// Sets up the line
+
+			// Sets up the line
 		case LINESHAPE:
 		{
 			g_pShape = new CLine(s_iPenStyle, s_iPenWidth, s_penColor, s_iMouseX, s_iMouseY);
@@ -269,25 +484,35 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 		// Sets up the ellipse
 		case ELLIPSESHAPE:
 		{
-			g_pShape = new CEllipse(s_iBrushStyle, s_iHatchStyle, s_FillColor, s_iPenStyle, s_penColor, s_iPenWidth, s_iMouseX, s_iMouseY);
+			g_pShape = new CStamp(g_hInstance, s_BitmapFilePath, s_iMouseX, s_iMouseY);
 			g_pShape->SetStartX(s_iMouseX);
 			g_pShape->SetStartY(s_iMouseY);
 			g_pCanvas->AddShape(g_pShape);
 		}
 		break;
-		
-		case POLYGONSHAPE: 
+
+		case POLYGONSHAPE:
 		{
 
 		}
 		break;
-		
+
 		case STAMP:
 		{
+			g_pShape = new CEllipse(s_iBrushStyle, s_iHatchStyle, s_FillColor, s_iPenStyle, s_penColor, s_iPenWidth, s_iMouseX, s_iMouseY);
+
 
 		}
 		break;
-		
+
+		case FREEHAND:
+		{
+			g_pShape = new CLine(s_iPenStyle, s_iPenWidth, s_penColor, s_iMouseX, s_iMouseY);
+			g_pCanvas->AddShape(g_pShape);
+			g_pShape = nullptr;
+		}
+		break;
+
 		default:
 			break;
 		}
@@ -300,6 +525,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	// On mouse release
 	case WM_LBUTTONUP:
 	{
+
 		// Finishes the shape
 		g_pShape = nullptr;
 
@@ -308,7 +534,7 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 	}
 	break;
 
-	
+
 	case WM_MOUSEMOVE:
 	{
 		// get the position of the mouse
@@ -317,7 +543,22 @@ LRESULT CALLBACK WindowProc(HWND _hwnd,
 
 		if (s_bMouseDown == true)
 		{
-			if (g_pShape != nullptr) // != nullptr
+			if (s_currentShape == FREEHAND)
+			{ 
+				if (g_pShape != nullptr){
+					g_pShape->SetEndX(s_iMouseX);
+					g_pShape->SetEndY(s_iMouseY);
+				}
+				
+				g_pShape = nullptr;
+				g_pShape = new CLine(s_iPenStyle, s_iPenWidth, s_penColor, s_iMouseX, s_iMouseY);
+				g_pCanvas->AddShape(g_pShape);
+
+				InvalidateRect(_hwnd, NULL, TRUE);
+				UpdateWindow(_hwnd);
+			}
+
+			else if (g_pShape != nullptr) // != nullptr
 			{
 				g_pShape->SetEndX(s_iMouseX);
 				g_pShape->SetEndY(s_iMouseY);
